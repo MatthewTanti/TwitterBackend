@@ -36,19 +36,19 @@ public class TwitterController {
 	   
 	   @RequestMapping(value = "/messages/hashtags", method = RequestMethod.GET)
 	   @ResponseBody 
-	   public String getMessageByHashtag(@RequestParam("hashtag") Set<String> hashtag, @RequestParam("offset") int offset, @RequestParam("limit") int limit){
+	   public List<Message> getMessageByHashtag(@RequestParam("hashtag") Set<String> hashtag, @RequestParam("offset") int offset, @RequestParam("limit") int limit){
 		   	return facade.lookupMessagesByHashtags(hashtag, offset, limit);	
   }
 	   
 	   @RequestMapping(value = "/messages/mentions", method = RequestMethod.GET)
 	   @ResponseBody 
-	   public String getMessageByMention(@RequestParam("Username") String Username, @RequestParam("offset") int offset, @RequestParam("limit") int limit){
+	   public List<Message> getMessageByMention(@RequestParam("Username") String Username, @RequestParam("offset") int offset, @RequestParam("limit") int limit){
 		   	return facade.lookupMessagesMentioningUser(Username, offset, limit);	
   }
 	   
 	   @RequestMapping(value = "/messages/users", method = RequestMethod.GET)
 	   @ResponseBody 
-	   public String getMessageByUser(@RequestParam("Username") String Username, @RequestParam("offset") int offset, @RequestParam("limit") int limit){
+	   public List<Message> getMessageByUser(@RequestParam("Username") String Username, @RequestParam("offset") int offset, @RequestParam("limit") int limit){
 		   	return facade.lookupMessagesByUser(Username, offset, limit);
   }
 	   

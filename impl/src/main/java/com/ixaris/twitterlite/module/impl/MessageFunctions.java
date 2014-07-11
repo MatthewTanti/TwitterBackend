@@ -159,8 +159,10 @@ public class MessageFunctions implements MessagesAdminFacade {
 	}
 	
 	@Override
-	public String lookupMessagesByHashtags(Set<String> hashtag, int offset, int limit) {
-
+	public List<Message> lookupMessagesByHashtags(Set<String> hashtag, int offset, int limit) {
+		Message m = new Message();
+		List<Message> messages = new ArrayList<Message>();
+		
 		String output = "";
 		List<MessageImpl> result = new ArrayList<MessageImpl>();
 
@@ -170,11 +172,11 @@ public class MessageFunctions implements MessagesAdminFacade {
 		result = q.getResultList();
 
 		for (int i = 0; i < result.size(); i++) {
-			output += result.get(i).getUsername() + result.get(i).getContent()
-					+ result.get(i).getTimestamp();
+			m = convertToMessage(result.get(i));
+			messages.add(m);
 		}
 
-		return output;
+		return messages;
 	}
 
 	@Override
@@ -195,39 +197,40 @@ public class MessageFunctions implements MessagesAdminFacade {
 	}
 
 	@Override
-	public String lookupMessagesByUser(String username, int offset, int limit) {
+	public List<Message> lookupMessagesByUser(String username, int offset, int limit) {
 
-		String output = "";
+		Message m = new Message();
+		List<Message> messages = new ArrayList<Message>();
 
 		Query q = em.createNamedQuery("message.byUsername", MessageImpl.class);
 		q.setParameter("Username", username);
 		List<MessageImpl> result = q.getResultList();
 
 		for (int i = 0; i < result.size(); i++) {
-			output += result.get(i).getUsername() + result.get(i).getContent()
-					+ result.get(i).getTimestamp();
+			m = convertToMessage(result.get(i));
+			messages.add(m);
 		}
 
-		return output;
+		return messages;
 
 	}
 
 	@Override
-	public String lookupMessagesMentioningUser(String username, int offset,
+	public List<Message> lookupMessagesMentioningUser(String username, int offset,
 			int limit) {
-
-		String output = "";
+		Message m = new Message();
+		List<Message> messages = new ArrayList<Message>();
 
 		Query q = em.createNamedQuery("message.bymention", MessageImpl.class);
 		q.setParameter("Username", username);
 		List<MessageImpl> result = q.getResultList();
 
 		for (int i = 0; i < result.size(); i++) {
-			output += result.get(i).getUsername() + result.get(i).getContent()
-					+ result.get(i).getTimestamp();
+			m = convertToMessage(result.get(i));
+			messages.add(m);
 		}
 
-		return output;
+		return messages;
 	}
 
 	public EntityManager getEm() {

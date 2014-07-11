@@ -25,7 +25,7 @@ public interface MessagesAdminFacade {
 	 * @param limit
 	 * @return
 	 */
-	public String lookupMessagesByHashtags(Set<String> hashtag, int offset, int limit );
+	public List<Message> lookupMessagesByHashtags(Set<String> hashtag, int offset, int limit );
 	
 	/**
 	 * @param offset
@@ -46,7 +46,7 @@ public interface MessagesAdminFacade {
 	 * @param limit
 	 * @return
 	 */
-	public String lookupMessagesByUser(String Username, int offset, int limit);
+	public List<Message> lookupMessagesByUser(String Username, int offset, int limit);
 	
 	/**
 	 * @param Username
@@ -54,7 +54,7 @@ public interface MessagesAdminFacade {
 	 * @param limit
 	 * @return
 	 */
-	public String lookupMessagesMentioningUser(String Username, int offset, int limit);
+	public List<Message> lookupMessagesMentioningUser(String Username, int offset, int limit);
 	
 
 }
