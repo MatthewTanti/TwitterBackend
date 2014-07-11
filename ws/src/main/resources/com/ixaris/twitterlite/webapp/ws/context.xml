@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+    <aop:aspectj-autoproxy />
+
+    <tx:annotation-driven order="512" />
+
+    <context:annotation-config />
+
+    <!-- override the default persistence annotation post processor -->
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"
+        name="org.springframework.context.annotation.internalPersistenceAnnotationProcessor">
+        <property name="defaultPersistenceUnitName" value="default" />
+    </bean>
+
+    <bean id="dataSourceProperties" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:ds.properties" />
+    </bean>
+    
+    <bean id="bitronixConfig" factory-method="getConfiguration" class="bitronix.tm.TransactionManagerServices">
+        <property name="serverId" value="spring-btm" />
+        <property name="logPart1Filename" value="${catalina.base}/logs/tlog/btm1.tlog" />
+        <property name="logPart2Filename" value="${catalina.base}/logs/tlog/btm2.tlog" />
+        <property name="defaultTransactionTimeout" value="600" /> 
+        <property name="warnAboutZeroResourceTransaction" value="false" />
+    </bean>
+    
+    <bean id="bitronixTransactionManager" class="bitronix.tm.TransactionManagerServices" 
+          factory-method="getTransactionManager" destroy-method="shutdown" depends-on="bitronixConfig" />
+    
+    <bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
+        <property name="transactionManager" ref="bitronixTransactionManager" />
+        <property name="userTransaction" ref="bitronixTransactionManager" />
+    </bean>
+            
+    <bean id="defaultDataSource" class="bitronix.tm.resource.jdbc.PoolingDataSource" depends-on="transactionManager"
+          init-method="init" destroy-method="close">
+        <property name="className" value="bitronix.tm.resource.jdbc.lrc.LrcXADataSource" />
+        <property name="uniqueName" value="defaultDataSource" />
+        <property name="minPoolSize" value="${ds.default.minPoolSize}" />
+        <property name="maxPoolSize" value="${ds.default.maxPoolSize}" />
+        <property name="maxIdleTime" value="${ds.default.maxIdleTime}" />
+        <property name="useTmJoin" value="true" /> 
+        <property name="deferConnectionRelease" value="true" /> 
+        <property name="automaticEnlistingEnabled" value="true"/> 
+        <property name="allowLocalTransactions" value="true"/> 
+        <property name="isolationLevel" value="READ_COMMITTED"/>
+        <property name="driverProperties">
+            <props>
+                <prop key="driverClassName">${ds.default.driverClass}</prop>
+                <prop key="url">${ds.default.url}</prop>
+                <prop key="user">${ds.default.user}</prop>
+                <prop key="password">${ds.default.password}</prop> 
+            </props>
+        </property>
+    </bean>
+
+    <bean id="defaultEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" 
+        depends-on="defaultDataSource">
+        <property name="persistenceUnitName" value="default" />
+        <property name="persistenceUnitManager">
+            <bean class="org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager">
+                <property name="defaultDataSource" ref="defaultDataSource" />
+                <property name="dataSourceLookup">
+                    <bean class="org.springframework.jdbc.datasource.lookup.BeanFactoryDataSourceLookup" />
+                </property>
+            </bean>
+        </property>
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                <property name="generateDdl" value="false" />
+            </bean>
+        </property>
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="hibernate.hbm2ddl.auto" value="none" />
+                <entry key="hibernate.generate_statistics" value="true" />
+                <entry key="hibernate.dialect" value="${ds.default.hibernateDialect}" />
+                <entry key="hibernate.archive.autodetection" value="class" /> 
+                
+                <entry key="hibernate.connection.release_mode" value="after_statement" />
+                <entry key="hibernate.transaction.jta.platform" value="org.hibernate.service.jta.platform.internal.BitronixJtaPlatform" />
+                <entry key="hibernate.current_session_context_class" value="jta" />
+
+                <entry key="hibernate.cache.use_second_level_cache" value="false" />
+                <entry key="hibernate.cache.use_structured_entries" value="false" />
+
+                <entry key="hibernate.show_sql" value="false" />
+                <entry key="hibernate.format_sql" value="false" />
+                <entry key="hibernate.use_sql_comments" value="false" />
+            </map>
+        </property>
+    </bean>
+    
+</beans>
