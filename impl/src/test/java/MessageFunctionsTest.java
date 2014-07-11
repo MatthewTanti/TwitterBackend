@@ -16,6 +16,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.exceptions.verification.NeverWantedButInvoked;
 
 import com.ixaris.twitterlite.module.bd.facade.MessagesAdminFacade;
 import com.ixaris.twitterlite.module.impl.MessageFunctions;
@@ -170,10 +171,8 @@ public class MessageFunctionsTest {
 		MessageFunctions.addMessage(Username, Content);
 	
 	    ArgumentCaptor<MessageImpl> argument = ArgumentCaptor.forClass(MessageImpl.class);
-	    Mockito.verify(em).persist(argument.capture());
-	  
-	    Assert.assertEquals("", argument.getValue().getUsername());
-	    Assert.assertEquals("",  argument.getValue().getContent());
+	    Mockito.verify(em,Mockito.never()).persist(argument.capture());
+
 	}
 	
 

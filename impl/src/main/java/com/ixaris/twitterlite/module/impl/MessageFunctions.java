@@ -36,19 +36,26 @@ public class MessageFunctions implements MessagesAdminFacade {
 		mention.clear();
 		hash.clear();
 		
-		if(username == null){
+		if(username == null || username == ""){
 			username = "";
+			validated = false;
+			output = "Username cannot be left empty";
 		}
 		
 		if(content == null){
 			content = new ArrayList<String>();
 			content.add("");
+			validated = false;
+			output = "Content is null";
+			
 		}
 		
 		for(int k = 0; k < content.size();k++){
 			
-			if (content.get(k) == null){
+			if (content.get(k) == null || content.get(k) == ""){
 				content.set(k, "");
+				validated = false;
+				output = "Content cannot be left empty";
 			}
 			
 						
