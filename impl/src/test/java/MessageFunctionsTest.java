@@ -138,14 +138,14 @@ public class MessageFunctionsTest {
 		MessageFunctions.addMessage(Username, Content);
 		
 		ArgumentCaptor<MessageImpl> argument = ArgumentCaptor.forClass(MessageImpl.class);
-	    Mockito.verify(em, Mockito.times(2)).persist(argument.capture());
+	    Mockito.verify(em, Mockito.times(1)).persist(argument.capture());
 
 		
 	    List<MessageImpl> messages = argument.getAllValues();
 	    Assert.assertEquals(Username, argument.getValue().getUsername());
-	    for(int i = 0; i < Content.size(); i++){
-	    	Assert.assertEquals(Content.get(i),  messages.get(i).getContent());
-	    }
+	   
+	    	Assert.assertEquals(Content.get(0),  messages.get(0).getContent());
+	    
 	    Assert.assertEquals(Hashtags, argument.getValue().getHashtags());
 	    Assert.assertEquals(Mentions, argument.getValue().getMentions());
 	    
