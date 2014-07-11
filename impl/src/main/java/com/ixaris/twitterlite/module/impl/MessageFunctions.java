@@ -1,6 +1,7 @@
 package com.ixaris.twitterlite.module.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -117,7 +118,7 @@ public class MessageFunctions implements MessagesAdminFacade {
 
 						MessageImpl m = new MessageImpl();
 
-						m.setTimestamp(10);
+						m.setTimestamp(new Date().getTime());
 						m.setContent(content.get(k));
 						m.setUsername(username);
 						m.setHashtags(hash);
