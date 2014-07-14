@@ -20,10 +20,10 @@ import javax.persistence.Table;
 @Table(name ="twit_message")
 @NamedQueries({
 	
-@NamedQuery(name = "message.byUsername", query = "SELECT m FROM MessageImpl m WHERE username =:Username"),
+@NamedQuery(name = "message.byUsername", query = "SELECT m FROM MessageImpl m WHERE username =:Username ORDER BY m.timestamp DESC"),
 @NamedQuery(name = "message.all", query = "SELECT m FROM MessageImpl m ORDER BY m.timestamp DESC"),
-@NamedQuery(name = "message.bymention", query = "SELECT m FROM MessageImpl m WHERE :Username in elements (m.mentions)"),
-@NamedQuery(name = "message.byhashtag", query = "select m from MessageImpl m join m.hashtags h where h in :hashtag group by m.id having count(m.id) = :tagCount")
+@NamedQuery(name = "message.bymention", query = "SELECT m FROM MessageImpl m WHERE :Username in elements (m.mentions) ORDER BY m.timestamp DESC"),
+@NamedQuery(name = "message.byhashtag", query = "select m from MessageImpl m join m.hashtags h where h in :hashtag group by m.id having count(m.id) = :tagCount ORDER BY m.timestamp DESC")
 })
 public class MessageImpl {
 	
