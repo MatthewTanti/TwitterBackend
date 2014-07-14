@@ -21,7 +21,7 @@ import javax.persistence.Table;
 @NamedQueries({
 	
 @NamedQuery(name = "message.byUsername", query = "SELECT m FROM MessageImpl m WHERE username =:Username"),
-@NamedQuery(name = "message.all", query = "SELECT m FROM MessageImpl m"),
+@NamedQuery(name = "message.all", query = "SELECT m FROM MessageImpl m ORDER BY m.timestamp DESC"),
 @NamedQuery(name = "message.bymention", query = "SELECT m FROM MessageImpl m WHERE :Username in elements (m.mentions)"),
 @NamedQuery(name = "message.byhashtag", query = "select m from MessageImpl m join m.hashtags h where h in :hashtag group by m.id having count(m.id) = :tagCount")
 })
@@ -36,6 +36,8 @@ public class MessageImpl {
 	
 	@Column(name = "content")
 	private String content;
+	
+	@Column(name = "timestamp")
 	private long timestamp;
 	
     @ElementCollection(fetch = FetchType.EAGER)

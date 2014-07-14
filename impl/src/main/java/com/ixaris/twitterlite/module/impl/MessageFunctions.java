@@ -57,26 +57,21 @@ public class MessageFunctions implements MessagesAdminFacade {
 					break;
 				}
 
+				
 				if (validated) {
 					// --- Remove spaces between the hashtags/metions and the
 					// words---//
 					for (int i = 0; i < content.get(k).length(); i++) {
-						if (content.get(k).charAt(i) == '#'
-								|| content.get(k).charAt(i) == '@') {
+						if (content.get(k).charAt(i) == '#' || content.get(k).charAt(i) == '@') {
+							
 							if (content.get(k).charAt(i + 1) == ' ') {
-								content.set(
-										k,
-										content.get(k).substring(0, i + 1)
-												+ content
-														.get(k)
-														.substring(
-																i + 2,
-																content.get(k)
-																		.length()));
+								
+								content.set(k,content.get(k).substring(0, i + 1) + content.get(k).substring(i + 2,content.get(k).length()));
 							}
 						}
 
 					}
+					
 
 					// ---Populate the hash List with hash tagged words in the
 					// content--------------//
@@ -132,7 +127,21 @@ public class MessageFunctions implements MessagesAdminFacade {
 		}
 		return output;
 	}
+	
+	
 
+	public Message convertToMessage(MessageImpl m) {
+		Message message = new Message();
+
+		message.setUsername(m.getUsername());
+		message.setContent(m.getContent());
+		message.setDate(m.getTimestamp());
+		return message;
+
+	}
+
+	
+	
 	@Override
 	public List<Message> lookupMessages(int offset, int limit) {
 
@@ -163,15 +172,6 @@ public class MessageFunctions implements MessagesAdminFacade {
 		return messages;
 	}
 
-	public Message convertToMessage(MessageImpl m) {
-		Message message = new Message();
-
-		message.setUsername(m.getUsername());
-		message.setContent(m.getContent());
-		message.setDate(m.getTimestamp());
-		return message;
-
-	}
 
 	@Override
 	public List<Message> lookupMessagesByHashtags(Set<String> hashtag,
@@ -250,12 +250,5 @@ public class MessageFunctions implements MessagesAdminFacade {
 		return messages;
 	}
 
-	public EntityManager getEm() {
-		return em;
-	}
-
-	public void setEm(EntityManager em) {
-		this.em = em;
-	}
 
 }
